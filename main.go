@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	r := gin.Default()
+	r := gin.New()
 	router.Load(r)
 	r.Run()
 }

@@ -5,6 +5,11 @@ import (
 	"net/http"
 )
 
+const (
+	SUCCESS int = 0
+	ERROR   int = -1
+)
+
 // Response 响应体
 type Response struct {
 	Code int         `json:"code"`
@@ -25,10 +30,10 @@ func (c *Controller) Result(r *gin.Context, code int, msg string, data interface
 
 // Success 成功响应
 func (c *Controller) Success(r *gin.Context, data interface{}) {
-	c.Result(r, 200, "success", data)
+	c.Result(r, SUCCESS, "success", data)
 }
 
 // Error 失败响应
 func (c *Controller) Error(r *gin.Context, data interface{}) {
-	c.Result(r, -1, "error", data)
+	c.Result(r, ERROR, "error", data)
 }
