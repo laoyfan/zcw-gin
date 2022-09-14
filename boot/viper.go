@@ -2,33 +2,51 @@ package boot
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"zcw-admin-server/config/entity"
 	"zcw-admin-server/utils"
 )
 
 func Viper() {
 	// 读取env
-	env := viper.New()
-	env.SetConfigFile(".env")
-	if err := env.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+	env := viper.New()                     // 创建env实例
+	env.SetConfigFile(".env")              // 读取指定文件
+	envMap := make(map[string]interface{}) // 接受env数据map
+	if err := env.ReadInConfig(); err == nil {
+		env.WatchConfig() // 监听env
+		env.OnConfigChange(func(e fsnotify.Event) {
+			fmt.Println("config file change:", e.Name) // @todo::后续日志模块写入
+			if err = env.Unmarshal(&envMap); err != nil {
+				fmt.Println(err)
+			}
+		})
+		if err = env.Unmarshal(&envMap); err != nil {
+			fmt.Println(err)
+		}
+
 	}
-	fmt.Println(env.GetString("APP_NAME"), 111111111)
+
 	// 读取config
-	configs := utils.GetPathFileNames("config")
-	if len(configs) > 0 {
+	fileNames := utils.GetPathFileNames("config")
+	if len(fileNames) > 0 {
+		for _, fileName := range fileNames {
+			v := viper.New()
+			v.SetConfigFile("config/" + fileName)
+			if err := v.ReadInConfig(); err != nil {
+				panic(fmt.Errorf("Fatal error config file: %s \n", err))
+			}
+			v.WatchConfig()
+			v.OnConfigChange(func(e fsnotify.Event) {
+				fmt.Println("config file change:", e.Name)
+				if err := v.Unmarshal(&entity.Config{}); err != nil {
+					fmt.Println(err)
+				}
+			})
+			if err := v.Unmarshal(&entity.CONFIG); err != nil {
+				fmt.Println(err)
+			}
+		}
 
 	}
-	fmt.Println(configs)
-
-	v := viper.New()
-
-	v.SetConfigFile("config.yaml")
-	if err := v.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("Fatal error config file: %s \n", err))
-	}
-	v.WatchConfig()
-	fmt.Println(gin.Mode())
-	fmt.Println(v.GetString("name"))
 }

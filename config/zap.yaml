@@ -1,0 +1,5 @@
+zap:
+  level: ${zap_level|info}
+  format: ${ZAP_FORMAT|console}
+  prefix: zcw
+  director: log
