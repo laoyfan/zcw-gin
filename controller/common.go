@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"zcw-admin-server/boot"
 )
 
 var Common = new(CommonController)
@@ -11,5 +12,6 @@ type CommonController struct {
 }
 
 func (c *CommonController) Notify(r *gin.Context) {
-	c.Success(r, "notify success")
+	data := boot.ConfigMap
+	c.Success(r, data)
 }
