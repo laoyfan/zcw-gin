@@ -1,6 +1,6 @@
 package boot
 
 func init() {
-	initViper()
-	initZap()
+	Viper()
+	Zap()
 }

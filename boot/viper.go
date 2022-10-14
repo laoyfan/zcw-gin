@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"strings"
 	"zcw-admin-server/utils"
 )
 
@@ -16,10 +17,10 @@ var (
 	ConfigMap = make(map[string]map[string]string) // 接受config数据
 )
 
-// initViper 自动读取配置
+// Viper 自动读取配置
 // 支持根目录.env文件热更新
 // 多配置读取
-func initViper() {
+func Viper() {
 	// 读取ConfigDir目录下所有配置
 	fileNames := utils.GetPathFileNames(ConfigDir) // 获取config文件夹下配置文件名称
 	if len(fileNames) > 0 {
@@ -58,10 +59,15 @@ func initViper() {
 // 写入env文件数据
 func getEnv() {
 	for cKey, singleMap := range ConfigMap { // 循环总配置
-		for sKey, _ := range singleMap { // 循环子配置
+		for sKey, sValue := range singleMap { // 循环子配置
 			eKey := cKey + "_" + sKey           // 组装env的key
 			if eValue, ok := EnvMap[eKey]; ok { // 判断env是否有相关数据
 				ConfigMap[cKey][sKey] = eValue
+			} else {
+				sArr := strings.Split(sValue, "|")
+				if len(sArr) > 1 {
+					ConfigMap[cKey][sKey] = sArr[1]
+				}
 			}
 		}
 	}
