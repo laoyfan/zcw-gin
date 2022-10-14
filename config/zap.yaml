@@ -1,10 +1,10 @@
 zap:
-  director: director|log
-  level: zap_level|fatal
-  maxAge: zap_maxAge|1
-  format: zap_format|console
-  stackTraceKey: zap_stackTraceKey|console
-  encodeLevel: zap_encodeLevel|1
-  prefix: zap_prefix|zcw
-  logInConsole: zap_logInConsole|true
-  showLine: zap_showLine|true
+  director: log
+  level: fatal
+  maxAge: 1
+  format: console
+  stackTraceKey: console
+  encodeLevel: 1
+  prefix: zcw
+  logInConsole: true
+  showLine: true

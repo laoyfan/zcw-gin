@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	_ "zcw-admin-server/boot"
+	_ "zcw-admin-server/core"
 	"zcw-admin-server/router"
 )
 

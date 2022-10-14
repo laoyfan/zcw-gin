@@ -1,4 +1,4 @@
-package boot
+package core
 
 import (
 	"fmt"
@@ -7,14 +7,24 @@ import (
 	"go.uber.org/zap/zapcore"
 	"os"
 	"path"
-	"strconv"
 	"time"
-	"zcw-admin-server/core"
 	"zcw-admin-server/utils"
 )
 
-func Zap() {
-	dir := ConfigMap["zap"]["director"]
+type Zap struct {
+	Director      string
+	Level         string
+	MaxAge        int
+	Format        string
+	StackTraceKey string
+	EncodeLevel   int
+	Prefix        string
+	LogInConsole  bool
+	ShowLine      bool
+}
+
+func initZap() {
+	dir := Config.Zap.Director
 	if ok, _ := utils.PathExists(dir); !ok {
 		fmt.Println("创建日志文件夹", dir)
 		err := os.Mkdir(dir, os.ModePerm)
@@ -23,12 +33,11 @@ func Zap() {
 		}
 	}
 
-	core.Log = zap.New(zapcore.NewTee(getCores()...))
-	showLine, _ := strconv.ParseBool(ConfigMap["zap"]["showLine"])
-	if showLine {
-		core.Log = core.Log.WithOptions(zap.AddCaller())
+	Log = zap.New(zapcore.NewTee(getCores()...))
+	if Config.Zap.ShowLine {
+		Log = Log.WithOptions(zap.AddCaller())
 	}
-	zap.ReplaceGlobals(core.Log)
+	zap.ReplaceGlobals(Log)
 }
 
 func getCores() []zapcore.Core {
@@ -71,15 +80,13 @@ func getEncoderCore(l zapcore.Level, level zap.LevelEnablerFunc) zapcore.Core {
 }
 
 func getWriteSyncer(level string) (zapcore.WriteSyncer, error) {
-	maxAge, _ := strconv.Atoi(ConfigMap["zap"]["maxAge"])
 	fileWriter, err := rotatelogs.New(
-		path.Join(ConfigMap["zap"]["director"], "%Y-%m-%d", level+".log"),
+		path.Join(Config.Zap.Director, "%Y-%m-%d", level+".log"),
 		rotatelogs.WithClock(rotatelogs.Local),
-		rotatelogs.WithMaxAge(time.Duration(maxAge)*24*time.Hour), // 日志留存时间
+		rotatelogs.WithMaxAge(time.Duration(Config.Zap.MaxAge)*24*time.Hour), // 日志留存时间
 		rotatelogs.WithRotationTime(time.Hour*24),
 	)
-	logInConsole, _ := strconv.ParseBool(ConfigMap["zap"]["logInConsole"])
-	if logInConsole {
+	if Config.Zap.LogInConsole {
 		return zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(fileWriter)), err
 	}
 	return zapcore.AddSync(fileWriter), err
@@ -100,7 +107,7 @@ func getEncoderConfig() zapcore.EncoderConfig {
 		TimeKey:        "time",
 		NameKey:        "logger",
 		CallerKey:      "caller",
-		StacktraceKey:  ConfigMap["zap"]["stackTraceKey"],
+		StacktraceKey:  Config.Zap.StackTraceKey,
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeLevel:    getEncodeLevel(),
 		EncodeTime:     customTimeEncoder,
@@ -110,7 +117,7 @@ func getEncoderConfig() zapcore.EncoderConfig {
 }
 
 func customTimeEncoder(t time.Time, encoder zapcore.PrimitiveArrayEncoder) {
-	encoder.AppendString(t.Format(ConfigMap["zap"]["prefix"] + "2006/01/02 - 15:04:05.000"))
+	encoder.AppendString(t.Format(Config.Zap.Prefix + "2006/01/02 - 15:04:05.000"))
 }
 
 func getEncodeLevel() zapcore.LevelEncoder {

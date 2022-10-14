@@ -1,7 +1,19 @@
 package core
 
-import "go.uber.org/zap"
+import (
+	"go.uber.org/zap"
+)
+
+type config struct {
+	Zap Zap `yaml:"zap"`
+}
 
 var (
-	Log *zap.Logger
+	Config config
+	Log    *zap.Logger
 )
+
+func init() {
+	Viper()
+	initZap()
+}

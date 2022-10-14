@@ -1,10 +1,10 @@
-package boot
+package core
 
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
-	"strings"
 	"zcw-admin-server/utils"
 )
 
@@ -13,8 +13,8 @@ const (
 )
 
 var (
-	EnvMap    = make(map[string]string)            // 接受env数据map
-	ConfigMap = make(map[string]map[string]string) // 接受config数据
+	EnvMap    = make(map[string]string)                 // 接受env数据map
+	ConfigMap = make(map[string]map[string]interface{}) // 接受config数据
 )
 
 // Viper 自动读取配置
@@ -31,7 +31,7 @@ func Viper() {
 				panic(fmt.Errorf("读取配置文件异常: %s \n", err))
 			}
 			if err := v.Unmarshal(&ConfigMap); err != nil { // 配置写入
-				fmt.Println(err)
+				panic(fmt.Errorf("ConfigMap转换异常: %s \n", err))
 			}
 		}
 	}
@@ -43,32 +43,32 @@ func Viper() {
 		env.OnConfigChange(func(e fsnotify.Event) {
 			fmt.Println("env文件已变更:", e.Name)
 			if err = env.Unmarshal(&EnvMap); err != nil { // 无异常处理
-				fmt.Println(err)
+				panic(fmt.Errorf("EnvMap变更时转换异常: %s \n", err))
 			}
-			getEnv()
+			writeEnv()
 		})
 		if err = env.Unmarshal(&EnvMap); err != nil { // 无异常处理
-			fmt.Println(err)
+			panic(fmt.Errorf("EnvMap转换异常: %s \n", err))
 		}
 	} else {
 		fmt.Println(err)
 	}
-	getEnv()
+	writeEnv()
 }
 
 // 写入env文件数据
-func getEnv() {
+func writeEnv() {
 	for cKey, singleMap := range ConfigMap { // 循环总配置
-		for sKey, sValue := range singleMap { // 循环子配置
+		for sKey := range singleMap { // 循环子配置
 			eKey := cKey + "_" + sKey           // 组装env的key
 			if eValue, ok := EnvMap[eKey]; ok { // 判断env是否有相关数据
 				ConfigMap[cKey][sKey] = eValue
-			} else {
-				sArr := strings.Split(sValue, "|")
-				if len(sArr) > 1 {
-					ConfigMap[cKey][sKey] = sArr[1]
-				}
 			}
 		}
+	}
+
+	err := mapstructure.Decode(ConfigMap, &Config)
+	if err != nil {
+		panic(fmt.Errorf("配置转换异常: %s \n", err))
 	}
 }
