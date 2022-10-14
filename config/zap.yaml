@@ -2,4 +2,4 @@ zap:
   level: zap_level|info
   format: zap_format|console
   prefix: zcw
-  director: log11141
+  director: log
