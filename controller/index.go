@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"zcw-admin-server/utils"
+	"zcw-admin-server/core"
 )
 
 var Index = new(IndexController)
@@ -13,6 +13,10 @@ type IndexController struct {
 }
 
 func (c *IndexController) Test(r *gin.Context) {
-	utils.WriteLog("ceshi", errors.New("1111111111"))
-	c.Success(r, true)
+	var user map[string]interface{}
+	db := core.DB["default"]
+	db.Table("user").Find(&user)
+	fmt.Println(user)
+
+	c.Success(r, user)
 }

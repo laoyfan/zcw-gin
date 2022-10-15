@@ -17,7 +17,7 @@ type Zap struct {
 	MaxAge        int
 	Format        string
 	StackTraceKey string
-	EncodeLevel   int
+	EncodeLevel   string
 	Prefix        string
 	LogInConsole  bool
 	ShowLine      bool
@@ -50,7 +50,7 @@ func getCores() []zapcore.Core {
 
 // 获取配置对应level
 func getLevel() zapcore.Level {
-	switch ConfigMap["zap"]["level"] {
+	switch Config.Zap.Level {
 	case "debug":
 		return zapcore.DebugLevel
 	case "info":
@@ -93,8 +93,7 @@ func getWriteSyncer(level string) (zapcore.WriteSyncer, error) {
 }
 
 func getEncoder() zapcore.Encoder {
-	format := ConfigMap["zap"]["format"]
-	if format == "json" {
+	if Config.Zap.Format == "json" {
 		return zapcore.NewJSONEncoder(getEncoderConfig())
 	}
 	return zapcore.NewConsoleEncoder(getEncoderConfig())
@@ -121,15 +120,14 @@ func customTimeEncoder(t time.Time, encoder zapcore.PrimitiveArrayEncoder) {
 }
 
 func getEncodeLevel() zapcore.LevelEncoder {
-	encodeLevel := ConfigMap["zap"]["encodeLevel"]
-	switch {
-	case encodeLevel == "LowercaseLevelEncoder": // 小写编码器(默认)
+	switch Config.Zap.EncodeLevel {
+	case "LowercaseLevelEncoder": // 小写编码器(默认)
 		return zapcore.LowercaseLevelEncoder
-	case encodeLevel == "LowercaseColorLevelEncoder": // 小写编码器带颜色
+	case "LowercaseColorLevelEncoder": // 小写编码器带颜色
 		return zapcore.LowercaseColorLevelEncoder
-	case encodeLevel == "CapitalLevelEncoder": // 大写编码器
+	case "CapitalLevelEncoder": // 大写编码器
 		return zapcore.CapitalLevelEncoder
-	case encodeLevel == "CapitalColorLevelEncoder": // 大写编码器带颜色
+	case "CapitalColorLevelEncoder": // 大写编码器带颜色
 		return zapcore.CapitalColorLevelEncoder
 	default:
 		return zapcore.LowercaseLevelEncoder

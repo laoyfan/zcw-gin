@@ -18,4 +18,7 @@ require (
 	golang.org/x/net v0.0.0-20220909164309-bea034e7d591 // indirect
 	golang.org/x/sys v0.0.0-20220909162455-aba9fc2a8ff2 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
+	gorm.io/driver/mysql v1.4.1 // indirect
+	gorm.io/gorm v1.24.0 // indirect
+	gorm.io/plugin/dbresolver v1.3.0 // indirect
 )

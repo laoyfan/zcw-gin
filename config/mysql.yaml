@@ -1,0 +1,17 @@
+mysql:
+  -
+    name: default
+    disable: false
+    type: mysql
+    node:
+      -
+        path: 127.0.0.1
+        port: "3306"
+        database: user-center
+        username: root
+        password: "123456789"
+        role: master
+    maxIdleConns: 10
+    maxOpenConns: 100
+    logLevel: info
+    log: true

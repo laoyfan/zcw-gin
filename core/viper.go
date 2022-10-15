@@ -3,24 +3,16 @@ package core
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
-	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 	"zcw-admin-server/utils"
 )
 
-const (
-	ConfigDir = "config" //配置文件夹
-)
-
-var (
-	EnvMap    = make(map[string]string)                 // 接受env数据map
-	ConfigMap = make(map[string]map[string]interface{}) // 接受config数据
-)
+const ConfigDir = "config" //配置文件夹
 
 // Viper 自动读取配置
 // 支持根目录.env文件热更新
 // 多配置读取
-func Viper() {
+func initViper() {
 	// 读取ConfigDir目录下所有配置
 	fileNames := utils.GetPathFileNames(ConfigDir) // 获取config文件夹下配置文件名称
 	if len(fileNames) > 0 {
@@ -30,45 +22,17 @@ func Viper() {
 			if err := v.ReadInConfig(); err != nil {    // 读取文件 此时异常需要panic
 				panic(fmt.Errorf("读取配置文件异常: %s \n", err))
 			}
-			if err := v.Unmarshal(&ConfigMap); err != nil { // 配置写入
-				panic(fmt.Errorf("ConfigMap转换异常: %s \n", err))
+			v.WatchConfig()
+			v.OnConfigChange(func(e fsnotify.Event) {
+				fmt.Println("配置文件变更:", e.Name)
+				if err := v.Unmarshal(&Config); err != nil { // 配置写入
+					panic(fmt.Errorf("Config转换异常: %s \n", err))
+				}
+				restart()
+			})
+			if err := v.Unmarshal(&Config); err != nil { // 配置写入
+				panic(fmt.Errorf("Config转换异常: %s \n", err))
 			}
 		}
-	}
-	// 读取env
-	env := viper.New()                         // 创建env实例
-	env.SetConfigFile(".env")                  // 读取指定文件
-	if err := env.ReadInConfig(); err == nil { // 存在.env文件则处理
-		env.WatchConfig() // 监听env
-		env.OnConfigChange(func(e fsnotify.Event) {
-			fmt.Println("env文件已变更:", e.Name)
-			if err = env.Unmarshal(&EnvMap); err != nil { // 无异常处理
-				panic(fmt.Errorf("EnvMap变更时转换异常: %s \n", err))
-			}
-			writeEnv()
-		})
-		if err = env.Unmarshal(&EnvMap); err != nil { // 无异常处理
-			panic(fmt.Errorf("EnvMap转换异常: %s \n", err))
-		}
-	} else {
-		fmt.Println(err)
-	}
-	writeEnv()
-}
-
-// 写入env文件数据
-func writeEnv() {
-	for cKey, singleMap := range ConfigMap { // 循环总配置
-		for sKey := range singleMap { // 循环子配置
-			eKey := cKey + "_" + sKey           // 组装env的key
-			if eValue, ok := EnvMap[eKey]; ok { // 判断env是否有相关数据
-				ConfigMap[cKey][sKey] = eValue
-			}
-		}
-	}
-
-	err := mapstructure.Decode(ConfigMap, &Config)
-	if err != nil {
-		panic(fmt.Errorf("配置转换异常: %s \n", err))
 	}
 }

@@ -4,7 +4,7 @@ zap:
   maxAge: 1
   format: console
   stackTraceKey: console
-  encodeLevel: 1
+  encodeLevel: LowercaseLevelEncoder
   prefix: zcw
-  logInConsole: true
-  showLine: true
+  logInConsole: false
+  showLine: false
