@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"zcw-admin-server/core"
+	"time"
+	"zcw-admin-server/global"
 )
 
 var Index = new(IndexController)
@@ -14,9 +16,20 @@ type IndexController struct {
 
 func (c *IndexController) Test(r *gin.Context) {
 	var user map[string]interface{}
-	db := core.DB["default"]
-	db.Table("user").Find(&user)
-	fmt.Println(user)
+	db := global.DB["default"]
+	redis := global.REDIS["default"]
+	err := redis.Set(context.Background(), "test", 444, 10*10*time.Second).Err()
+	if err != nil {
+		fmt.Println(err, 111)
+	}
 
-	c.Success(r, user)
+	i, _ := redis.Get(context.Background(), "test").Int()
+
+	db.Table("user").Find(&user)
+	fmt.Println(user, i)
+
+	c.Success(r, map[string]interface{}{
+		"user": user,
+		"test": i,
+	})
 }

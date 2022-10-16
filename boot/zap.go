@@ -1,4 +1,4 @@
-package core
+package boot
 
 import (
 	"fmt"
@@ -8,36 +8,24 @@ import (
 	"os"
 	"path"
 	"time"
+	"zcw-admin-server/global"
 	"zcw-admin-server/utils"
 )
 
-type Zap struct {
-	Director      string
-	Level         string
-	MaxAge        int
-	Format        string
-	StackTraceKey string
-	EncodeLevel   string
-	Prefix        string
-	LogInConsole  bool
-	ShowLine      bool
-}
-
-func initZap() {
-	dir := Config.Zap.Director
-	if ok, _ := utils.PathExists(dir); !ok {
-		fmt.Println("创建日志文件夹", dir)
-		err := os.Mkdir(dir, os.ModePerm)
+func Zap() {
+	if ok, _ := utils.PathExists(global.CONFIG.Zap.Director); !ok {
+		fmt.Println("创建日志文件夹", global.CONFIG.Zap.Director)
+		err := os.Mkdir(global.CONFIG.Zap.Director, os.ModePerm)
 		if err != nil {
 			fmt.Println("创建日志文件夹失败", err)
 		}
 	}
 
-	Log = zap.New(zapcore.NewTee(getCores()...))
-	if Config.Zap.ShowLine {
-		Log = Log.WithOptions(zap.AddCaller())
+	global.LOG = zap.New(zapcore.NewTee(getCores()...))
+	if global.CONFIG.Zap.ShowLine {
+		global.LOG = global.LOG.WithOptions(zap.AddCaller())
 	}
-	zap.ReplaceGlobals(Log)
+	zap.ReplaceGlobals(global.LOG)
 }
 
 func getCores() []zapcore.Core {
@@ -50,7 +38,7 @@ func getCores() []zapcore.Core {
 
 // 获取配置对应level
 func getLevel() zapcore.Level {
-	switch Config.Zap.Level {
+	switch global.CONFIG.Zap.Level {
 	case "debug":
 		return zapcore.DebugLevel
 	case "info":
@@ -81,19 +69,19 @@ func getEncoderCore(l zapcore.Level, level zap.LevelEnablerFunc) zapcore.Core {
 
 func getWriteSyncer(level string) (zapcore.WriteSyncer, error) {
 	fileWriter, err := rotatelogs.New(
-		path.Join(Config.Zap.Director, "%Y-%m-%d", level+".log"),
+		path.Join(global.CONFIG.Zap.Director, "%Y-%m-%d", level+".log"),
 		rotatelogs.WithClock(rotatelogs.Local),
-		rotatelogs.WithMaxAge(time.Duration(Config.Zap.MaxAge)*24*time.Hour), // 日志留存时间
+		rotatelogs.WithMaxAge(time.Duration(global.CONFIG.Zap.MaxAge)*24*time.Hour), // 日志留存时间
 		rotatelogs.WithRotationTime(time.Hour*24),
 	)
-	if Config.Zap.LogInConsole {
+	if global.CONFIG.Zap.LogInConsole {
 		return zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(fileWriter)), err
 	}
 	return zapcore.AddSync(fileWriter), err
 }
 
 func getEncoder() zapcore.Encoder {
-	if Config.Zap.Format == "json" {
+	if global.CONFIG.Zap.Format == "json" {
 		return zapcore.NewJSONEncoder(getEncoderConfig())
 	}
 	return zapcore.NewConsoleEncoder(getEncoderConfig())
@@ -106,7 +94,7 @@ func getEncoderConfig() zapcore.EncoderConfig {
 		TimeKey:        "time",
 		NameKey:        "logger",
 		CallerKey:      "caller",
-		StacktraceKey:  Config.Zap.StackTraceKey,
+		StacktraceKey:  global.CONFIG.Zap.StackTraceKey,
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeLevel:    getEncodeLevel(),
 		EncodeTime:     customTimeEncoder,
@@ -116,11 +104,11 @@ func getEncoderConfig() zapcore.EncoderConfig {
 }
 
 func customTimeEncoder(t time.Time, encoder zapcore.PrimitiveArrayEncoder) {
-	encoder.AppendString(t.Format(Config.Zap.Prefix + "2006/01/02 - 15:04:05.000"))
+	encoder.AppendString(t.Format(global.CONFIG.Zap.Prefix + "2006/01/02 - 15:04:05.000"))
 }
 
 func getEncodeLevel() zapcore.LevelEncoder {
-	switch Config.Zap.EncodeLevel {
+	switch global.CONFIG.Zap.EncodeLevel {
 	case "LowercaseLevelEncoder": // 小写编码器(默认)
 		return zapcore.LowercaseLevelEncoder
 	case "LowercaseColorLevelEncoder": // 小写编码器带颜色

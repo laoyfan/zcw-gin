@@ -1,9 +1,10 @@
-package core
+package boot
 
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"zcw-admin-server/global"
 	"zcw-admin-server/utils"
 )
 
@@ -12,7 +13,7 @@ const ConfigDir = "config" //配置文件夹
 // Viper 自动读取配置
 // 支持根目录.env文件热更新
 // 多配置读取
-func initViper() {
+func Viper() {
 	// 读取ConfigDir目录下所有配置
 	fileNames := utils.GetPathFileNames(ConfigDir) // 获取config文件夹下配置文件名称
 	if len(fileNames) > 0 {
@@ -25,12 +26,12 @@ func initViper() {
 			v.WatchConfig()
 			v.OnConfigChange(func(e fsnotify.Event) {
 				fmt.Println("配置文件变更:", e.Name)
-				if err := v.Unmarshal(&Config); err != nil { // 配置写入
+				if err := v.Unmarshal(&global.CONFIG); err != nil { // 配置写入
 					panic(fmt.Errorf("Config转换异常: %s \n", err))
 				}
 				restart()
 			})
-			if err := v.Unmarshal(&Config); err != nil { // 配置写入
+			if err := v.Unmarshal(&global.CONFIG); err != nil { // 配置写入
 				panic(fmt.Errorf("Config转换异常: %s \n", err))
 			}
 		}

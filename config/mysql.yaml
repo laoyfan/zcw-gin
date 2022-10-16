@@ -10,7 +10,13 @@ mysql:
         database: user-center
         username: root
         password: "123456789"
-        role: master
+        role: true
+      - path: 127.0.0.1
+        port: "3306"
+        database: user-center
+        username: root
+        password: "123456789"
+        role: false
     maxIdleConns: 10
     maxOpenConns: 100
     logLevel: info

@@ -1,4 +1,4 @@
-package core
+package boot
 
 import (
 	"fmt"
@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"zcw-admin-server/global"
 )
 
 type Mysql struct {
@@ -29,7 +30,7 @@ type Node struct {
 	Username string
 	Password string
 	Config   string
-	Role     string
+	Role     bool
 }
 
 type Writer struct {
@@ -38,7 +39,7 @@ type Writer struct {
 
 func initMysql() {
 	dbMap := make(map[string]*gorm.DB)
-	for _, info := range Config.Mysql {
+	for _, info := range global.CONFIG.Mysql {
 		if info.Disable {
 			continue
 		}
@@ -50,10 +51,10 @@ func initMysql() {
 		}
 
 	}
-	DB = dbMap
+	global.DB = dbMap
 }
 
-func getMysqlDB(m Mysql) *gorm.DB {
+func getMysqlDB(m global.Mysql) *gorm.DB {
 	var (
 		sources  []gorm.Dialector
 		replicas []gorm.Dialector
@@ -61,19 +62,19 @@ func getMysqlDB(m Mysql) *gorm.DB {
 
 	for _, node := range m.Node {
 		dsn := node.Username + ":" + node.Password + "@tcp(" + node.Path + ":" + node.Port + ")/" + node.Database + "?" + node.Config
-
 		mysqlConfig := mysql.Config{
 			DSN:                       dsn,
 			DefaultStringSize:         191,
 			SkipInitializeWithVersion: false,
 		}
 
-		if node.Role == "slave" {
-			replicas = append(replicas, mysql.New(mysqlConfig))
-		} else {
+		if node.Role {
 			sources = append(sources, mysql.New(mysqlConfig))
+		} else {
+			replicas = append(replicas, mysql.New(mysqlConfig))
 		}
 	}
+
 	if db, err := gorm.Open(sources[0], getConfig(m)); err != nil {
 		fmt.Println("数据库连接异常:", err)
 		return nil
@@ -90,13 +91,14 @@ func getMysqlDB(m Mysql) *gorm.DB {
 				SetMaxIdleConns(100).
 				SetMaxOpenConns(200))
 		if err != nil {
+			fmt.Println("数据库配置异常:", err)
 			return nil
 		}
 		return db
 	}
 }
 
-func getConfig(m Mysql) *gorm.Config {
+func getConfig(m global.Mysql) *gorm.Config {
 	c := &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}
 	l := logger.New(NewWriter(log.New(os.Stdout, "\r\n", log.LstdFlags)), logger.Config{
 		SlowThreshold: 200 * time.Microsecond,
@@ -124,9 +126,9 @@ func NewWriter(w logger.Writer) *Writer {
 
 func (w *Writer) Printf(message string, data ...interface{}) {
 	w.Writer.Printf(message, data...)
-	if Config.App.Debug {
+	if global.CONFIG.App.Debug {
 		w.Writer.Printf(message, data...)
 	} else {
-		Log.Info(fmt.Sprintf(message+"\n", data))
+		global.LOG.Info(fmt.Sprintf(message+"\n", data))
 	}
 }
