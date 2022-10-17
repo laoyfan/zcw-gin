@@ -1,4 +1,4 @@
-package initialize
+package redis
 
 import (
 	"context"

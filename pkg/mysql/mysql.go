@@ -1,4 +1,4 @@
-package boot
+package mysql
 
 import (
 	"fmt"
@@ -12,49 +12,7 @@ import (
 	"zcw-admin-server/global"
 )
 
-type Mysql struct {
-	Name         string
-	Disable      bool
-	Type         string
-	Node         []Node
-	MaxIdleConns int
-	MaxOpenConns int
-	LogLevel     string
-	Log          bool
-}
-
-type Node struct {
-	Path     string
-	Port     string
-	Database string
-	Username string
-	Password string
-	Config   string
-	Role     bool
-}
-
-type Writer struct {
-	logger.Writer
-}
-
-func initMysql() {
-	dbMap := make(map[string]*gorm.DB)
-	for _, info := range global.CONFIG.Mysql {
-		if info.Disable {
-			continue
-		}
-		switch info.Type {
-		case "mysql":
-			dbMap[info.Name] = getMysqlDB(info)
-		default:
-			continue
-		}
-
-	}
-	global.DB = dbMap
-}
-
-func getMysqlDB(m global.Mysql) *gorm.DB {
+func NewMysql(m global.Mysql) *gorm.DB {
 	var (
 		sources  []gorm.Dialector
 		replicas []gorm.Dialector
@@ -118,17 +76,4 @@ func getConfig(m global.Mysql) *gorm.Config {
 		c.Logger = l.LogMode(logger.Info)
 	}
 	return c
-}
-
-func NewWriter(w logger.Writer) *Writer {
-	return &Writer{w}
-}
-
-func (w *Writer) Printf(message string, data ...interface{}) {
-	w.Writer.Printf(message, data...)
-	if global.CONFIG.App.Debug {
-		w.Writer.Printf(message, data...)
-	} else {
-		global.LOG.Info(fmt.Sprintf(message+"\n", data))
-	}
 }

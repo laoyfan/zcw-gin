@@ -12,7 +12,9 @@ import (
 	"zcw-admin-server/utils"
 )
 
-func Zap() {
+// 初始化日志
+
+func initZap() {
 	if ok, _ := utils.PathExists(global.CONFIG.Zap.Director); !ok {
 		fmt.Println("创建日志文件夹", global.CONFIG.Zap.Director)
 		err := os.Mkdir(global.CONFIG.Zap.Director, os.ModePerm)

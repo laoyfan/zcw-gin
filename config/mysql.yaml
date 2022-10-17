@@ -1,6 +1,6 @@
 mysql:
   -
-    name: default
+    name: basic
     disable: false
     type: mysql
     node:

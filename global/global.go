@@ -9,8 +9,8 @@ import (
 // 当前文件挂载全局
 
 var (
-	DB     map[string]*gorm.DB
-	REDIS  map[string]*redis.Client
+	DB     = map[string]*gorm.DB{}
+	REDIS  = map[string]*redis.Client{}
 	LOG    *zap.Logger
 	CONFIG Config
 )

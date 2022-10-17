@@ -5,15 +5,14 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"zcw-admin-server/global"
+	"zcw-admin-server/pkg/mysql"
+	"zcw-admin-server/pkg/redis"
 	"zcw-admin-server/utils"
 )
 
 const ConfigDir = "config" //配置文件夹
 
-// Viper 自动读取配置
-// 支持根目录.env文件热更新
-// 多配置读取
-func Viper() {
+func init() {
 	// 读取ConfigDir目录下所有配置
 	fileNames := utils.GetPathFileNames(ConfigDir) // 获取config文件夹下配置文件名称
 	if len(fileNames) > 0 {
@@ -29,11 +28,40 @@ func Viper() {
 				if err := v.Unmarshal(&global.CONFIG); err != nil { // 配置写入
 					panic(fmt.Errorf("Config转换异常: %s \n", err))
 				}
-				restart()
+				start()
 			})
 			if err := v.Unmarshal(&global.CONFIG); err != nil { // 配置写入
 				panic(fmt.Errorf("Config转换异常: %s \n", err))
 			}
 		}
+	}
+	start()
+}
+
+func start() {
+	initZap()
+	initMysql()
+	initRedis()
+}
+
+// 初始化mysql
+
+func initMysql() {
+	for _, info := range global.CONFIG.Mysql {
+		if info.Disable {
+			continue
+		}
+		global.DB[info.Name] = mysql.NewMysql(info)
+	}
+}
+
+// 初始化redis
+
+func initRedis() {
+	for _, info := range global.CONFIG.Redis {
+		if info.Disable {
+			continue
+		}
+		global.REDIS[info.Name] = redis.NewRedisClient(info)
 	}
 }
