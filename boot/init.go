@@ -7,6 +7,7 @@ import (
 	"zcw-admin-server/global"
 	"zcw-admin-server/pkg/mysql"
 	"zcw-admin-server/pkg/redis"
+	"zcw-admin-server/pkg/zap"
 	"zcw-admin-server/utils"
 )
 
@@ -42,6 +43,12 @@ func start() {
 	initZap()
 	initMysql()
 	initRedis()
+}
+
+// 初始化zap
+
+func initZap() {
+	zap.InitZap()
 }
 
 // 初始化mysql

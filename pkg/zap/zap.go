@@ -1,4 +1,4 @@
-package boot
+package zap
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 
 // 初始化日志
 
-func initZap() {
+func InitZap() {
 	if ok, _ := utils.PathExists(global.CONFIG.Zap.Director); !ok {
 		fmt.Println("创建日志文件夹", global.CONFIG.Zap.Director)
 		err := os.Mkdir(global.CONFIG.Zap.Director, os.ModePerm)
