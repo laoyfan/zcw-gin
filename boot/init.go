@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"zcw-admin-server/boot/internal"
 	"zcw-admin-server/global"
-	"zcw-admin-server/pkg/mysql"
-	"zcw-admin-server/pkg/redis"
-	"zcw-admin-server/pkg/zap"
 	"zcw-admin-server/utils"
 )
 
@@ -29,46 +27,18 @@ func init() {
 				if err := v.Unmarshal(&global.CONFIG); err != nil { // 配置写入
 					panic(fmt.Errorf("Config转换异常: %s \n", err))
 				}
-				start()
+				created()
 			})
 			if err := v.Unmarshal(&global.CONFIG); err != nil { // 配置写入
 				panic(fmt.Errorf("Config转换异常: %s \n", err))
 			}
 		}
 	}
-	start()
+	created()
 }
 
-func start() {
-	initZap()
-	initMysql()
-	initRedis()
-}
-
-// 初始化zap
-
-func initZap() {
-	zap.InitZap()
-}
-
-// 初始化mysql
-
-func initMysql() {
-	for _, info := range global.CONFIG.Mysql {
-		if info.Disable {
-			continue
-		}
-		global.DB[info.Name] = mysql.NewMysql(info)
-	}
-}
-
-// 初始化redis
-
-func initRedis() {
-	for _, info := range global.CONFIG.Redis {
-		if info.Disable {
-			continue
-		}
-		global.REDIS[info.Name] = redis.NewRedisClient(info)
-	}
+func created() {
+	internal.Zap()
+	internal.Mysql()
+	internal.Redis()
 }
