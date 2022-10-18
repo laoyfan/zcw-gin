@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"go.uber.org/zap"
 	"net/http"
 	"os"
@@ -15,16 +14,27 @@ import (
 )
 
 func main() {
+	// 服务结束前关闭链接
 	defer boot.Close()
-	server := router.Server()
+
+	// 装载路由
+	r := router.Server()
+
+	// HTTP配置
+	server := &http.Server{
+		Addr:           global.CONFIG.App.Port,
+		Handler:        r,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			global.LOG.Fatal("listen: %s\n", zap.Error(err))
 		}
+		global.LOG.Info("服务已开启" + global.CONFIG.App.Port)
 	}()
-
-	fmt.Println(server)
 
 	quit := make(chan os.Signal, 1)
 

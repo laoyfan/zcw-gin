@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"time"
 	"zcw-admin-server/app/model/basic"
@@ -17,18 +16,11 @@ type IndexController struct {
 
 func (c *IndexController) Test(r *gin.Context) {
 	redis := global.REDIS["default"]
-	err := redis.Set(context.Background(), "test", 444, 10*10*time.Second).Err()
-	if err != nil {
-		fmt.Println(err, 111)
-	}
-
+	redis.Set(context.Background(), "test", 444, 10*10*time.Second)
 	i, _ := redis.Get(context.Background(), "test").Int()
-
 	var userModel basic.UserModel
 	user := userModel.GetByCondition()
-	fmt.Println(user, i)
-	global.LOG.Error("test")
-
+	time.Sleep(7 * time.Second)
 	c.Success(r, map[string]interface{}{
 		"user": user,
 		"test": i,

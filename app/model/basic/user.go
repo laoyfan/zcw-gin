@@ -1,7 +1,6 @@
 package basic
 
 import (
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -19,7 +18,6 @@ func (m *UserModel) Model() *gorm.DB {
 }
 
 func (m *UserModel) GetByCondition() (user *User) {
-	err := m.Model().Find(&user).Error
-	fmt.Println(err)
+	m.Model().Find(&user)
 	return
 }

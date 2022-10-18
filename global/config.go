@@ -13,6 +13,7 @@ type Config struct {
 
 type App struct {
 	Env   string
+	Mode  string
 	Debug bool
 	Port  string
 }

@@ -2,14 +2,17 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"zcw-admin-server/global"
 	"zcw-admin-server/middleware"
 )
 
-func Server() *http.Server {
+func Server() *gin.Engine {
+	// 关闭控制台颜色
+	gin.DisableConsoleColor()
+	gin.SetMode(global.CONFIG.App.Mode)
+
 	r := gin.New()
-	// 请求预处理
+
 	r.Use(
 		middleware.Logger, //日志处理
 		middleware.Cors,   //跨域处理
@@ -18,8 +21,5 @@ func Server() *http.Server {
 
 	Api(r)
 
-	return &http.Server{
-		Addr:    global.CONFIG.App.Port,
-		Handler: r,
-	}
+	return r
 }

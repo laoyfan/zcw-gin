@@ -1,3 +1,6 @@
 app:
-  env: public
+  # 是否开启debug模式
   debug: false
+  # gin release模式与debug模式切换
+  mode: release
+  port: :8880
