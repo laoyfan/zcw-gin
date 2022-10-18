@@ -7,15 +7,15 @@ mysql:
       -
         path: 127.0.0.1
         port: "3306"
-        database: user-center
+        database: dianba_common
         username: root
-        password: "123456789"
+        password: "123456"
         role: true
       - path: 127.0.0.1
         port: "3306"
-        database: user-center
+        database: dianba_common
         username: root
-        password: "123456789"
+        password: "123456"
         role: false
     maxIdleConns: 10
     maxOpenConns: 100

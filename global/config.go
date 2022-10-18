@@ -14,6 +14,7 @@ type Config struct {
 type App struct {
 	Env   string
 	Debug bool
+	Port  string
 }
 
 // 日志配置

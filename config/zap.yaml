@@ -1,6 +1,6 @@
 zap:
   director: log
-  level: fatal
+  level: info
   maxAge: 1
   format: console
   stackTraceKey: console

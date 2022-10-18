@@ -2,17 +2,24 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"zcw-admin-server/app/controller"
+	"net/http"
+	"zcw-admin-server/global"
 	"zcw-admin-server/middleware"
 )
 
-func Load(r *gin.Engine) {
+func Server() *http.Server {
+	r := gin.New()
 	// 请求预处理
 	r.Use(
-		middleware.Cors,  //跨域处理
-		middleware.Error, //异常处理
+		middleware.Logger, //日志处理
+		middleware.Cors,   //跨域处理
+		middleware.Error,  //异常处理
 	)
-	// api
-	api := r.Group("/api")
-	api.GET("/test", controller.Index.Test)
+
+	Api(r)
+
+	return &http.Server{
+		Addr:    global.CONFIG.App.Port,
+		Handler: r,
+	}
 }

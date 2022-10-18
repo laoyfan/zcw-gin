@@ -27,6 +27,7 @@ func (c *IndexController) Test(r *gin.Context) {
 	var userModel basic.UserModel
 	user := userModel.GetByCondition()
 	fmt.Println(user, i)
+	global.LOG.Error("test")
 
 	c.Success(r, map[string]interface{}{
 		"user": user,

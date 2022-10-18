@@ -11,6 +11,8 @@ import (
 
 const ConfigDir = "config" //配置文件夹
 
+// 开启服务前初始化准备
+
 func init() {
 	// 读取ConfigDir目录下所有配置
 	fileNames := utils.GetPathFileNames(ConfigDir) // 获取config文件夹下配置文件名称
@@ -41,4 +43,9 @@ func created() {
 	internal.Zap()
 	internal.Mysql()
 	internal.Redis()
+}
+
+func Close() {
+	internal.MysqlClose()
+	internal.RedisClose()
 }
