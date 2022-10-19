@@ -20,7 +20,6 @@ func (c *IndexController) Test(r *gin.Context) {
 	i, _ := redis.Get(context.Background(), "test").Int()
 	var userModel basic.UserModel
 	user := userModel.GetByCondition()
-	time.Sleep(7 * time.Second)
 	c.Success(r, map[string]interface{}{
 		"user": user,
 		"test": i,
