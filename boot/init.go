@@ -71,10 +71,10 @@ func Server() {
 	}
 
 	go func() {
+		global.LOG.Info("服务开启" + global.CONFIG.App.Port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			global.LOG.Fatal("listen: %s\n", zap.Error(err))
 		}
-		global.LOG.Info("服务已开启" + global.CONFIG.App.Port)
 	}()
 
 	quit := make(chan os.Signal, 1)
