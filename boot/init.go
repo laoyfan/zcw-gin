@@ -54,6 +54,7 @@ func created() {
 	internal.Zap()
 	internal.Mysql()
 	internal.Redis()
+	internal.Limiter()
 }
 
 // 关闭开启的连接资源
@@ -76,9 +77,10 @@ func Server() {
 	r := gin.New()
 	// 全局处理中间件
 	r.Use(
-		middleware.Logger, //日志处理
-		middleware.Cors,   //跨域处理
-		middleware.Error,  //异常处理
+		middleware.Logger,  //日志处理
+		middleware.Cors,    //跨域处理
+		middleware.Error,   //异常处理
+		middleware.Limiter, //限流处理
 	)
 	// HTTP配置
 	server := &http.Server{
