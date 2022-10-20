@@ -5,7 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"time"
+	"zcw-admin-server/app/entity"
 	"zcw-admin-server/app/model/basic"
+	"zcw-admin-server/app/service"
 	"zcw-admin-server/global"
 )
 
@@ -13,15 +15,11 @@ var Index = new(IndexController)
 
 type IndexController struct {
 	Controller
-}
-
-type Test struct {
-	Age int `json:"age" p:"age" binding:"required,gte=10"`
+	indexService service.IndexService
 }
 
 func (c *IndexController) Test(r *gin.Context) {
-	var params Test
-
+	var params entity.Index
 	if err := c.Valid(r, &params); err != nil {
 		return
 	}
