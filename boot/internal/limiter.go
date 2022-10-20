@@ -8,5 +8,5 @@ import (
 // 创建限流器实例
 
 func Limiter() {
-	global.LIMITER = tollbooth.NewLimiter(1, nil)
+	global.LIMITER = tollbooth.NewLimiter(global.CONFIG.App.Limit, nil)
 }

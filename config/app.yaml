@@ -4,3 +4,4 @@ app:
   # gin release模式与debug模式切换
   mode: release
   port: :8880
+  limit: 10

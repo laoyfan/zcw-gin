@@ -16,6 +16,7 @@ type App struct {
 	Mode  string
 	Debug bool
 	Port  string
+	Limit float64
 }
 
 // 日志配置
