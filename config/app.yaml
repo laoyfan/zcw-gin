@@ -5,3 +5,4 @@ app:
   mode: release
   port: :8880
   limit: 10
+  language: zh

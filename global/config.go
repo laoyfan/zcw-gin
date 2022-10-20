@@ -12,11 +12,12 @@ type Config struct {
 // 系统配置
 
 type App struct {
-	Env   string
-	Mode  string
-	Debug bool
-	Port  string
-	Limit float64
+	Env      string
+	Mode     string
+	Debug    bool
+	Port     string
+	Limit    float64
+	Language string
 }
 
 // 日志配置

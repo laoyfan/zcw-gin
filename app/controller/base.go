@@ -2,12 +2,16 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"net/http"
+	"strings"
+	"zcw-admin-server/global"
 )
 
 const (
 	SUCCESS int = 0
 	ERROR   int = -1
+	Valid   int = -2
 )
 
 // Response 响应体
@@ -30,10 +34,31 @@ func (c *Controller) Result(r *gin.Context, code int, msg string, data interface
 
 // Success 成功响应
 func (c *Controller) Success(r *gin.Context, data interface{}) {
-	c.Result(r, SUCCESS, "success", data)
+	c.Result(r, SUCCESS, "请求成功", data)
 }
 
 // Error 失败响应
 func (c *Controller) Error(r *gin.Context, data interface{}) {
-	c.Result(r, ERROR, "error", data)
+	c.Result(r, ERROR, "请求失败", data)
+}
+
+// Valid 参数校验
+func (c *Controller) Valid(r *gin.Context, valid interface{}) error {
+	if err := r.ShouldBind(valid); err != nil {
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			c.Result(r, Valid, "请求参数校验失败", c.removeTopStruct(errs.Translate(global.Trans)))
+		} else {
+			c.Result(r, Valid, "请求参数校验失败", err.Error())
+		}
+		return err
+	}
+	return nil
+}
+
+func (c *Controller) removeTopStruct(fields map[string]string) map[string]string {
+	res := map[string]string{}
+	for field, err := range fields {
+		res[field[strings.Index(field, ".")+1:]] = err
+	}
+	return res
 }

@@ -55,6 +55,7 @@ func created() {
 	internal.Mysql()
 	internal.Redis()
 	internal.Limiter()
+	internal.Valid()
 }
 
 // 关闭开启的连接资源
