@@ -14,6 +14,7 @@ import (
 	"time"
 	"zcw-admin-server/boot/internal"
 	"zcw-admin-server/global"
+	"zcw-admin-server/middleware"
 	"zcw-admin-server/utils"
 )
 
@@ -47,11 +48,22 @@ func init() {
 	created()
 }
 
+// 初始化连接
+
 func created() {
 	internal.Zap()
 	internal.Mysql()
 	internal.Redis()
 }
+
+// 关闭开启的连接资源
+
+func Close() {
+	internal.MysqlClose()
+	internal.RedisClose()
+}
+
+// 开启服务
 
 func Server() {
 	// 服务结束前关闭链接
@@ -60,42 +72,39 @@ func Server() {
 	gin.DisableConsoleColor()
 	// 设置模式
 	gin.SetMode(global.CONFIG.App.Mode)
-
+	// 开启gin实例
+	r := gin.New()
+	// 全局处理中间件
+	r.Use(
+		middleware.Logger, //日志处理
+		middleware.Cors,   //跨域处理
+		middleware.Error,  //异常处理
+	)
 	// HTTP配置
 	server := &http.Server{
 		Addr:           global.CONFIG.App.Port,
-		Handler:        internal.Route(),
+		Handler:        internal.Route(r),
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-
+	// 开启服务
 	go func() {
 		global.LOG.Info("服务开启" + global.CONFIG.App.Port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			global.LOG.Fatal("listen: %s\n", zap.Error(err))
 		}
 	}()
-
+	// 优雅Shutdown（或重启）服务
 	quit := make(chan os.Signal, 1)
-
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-
 	<-quit
 	global.LOG.Info("关闭服务...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-
 	defer cancel()
-
 	if err := server.Shutdown(ctx); err != nil {
 		global.LOG.Fatal("服务关闭原因:", zap.Error(err))
 	}
-
 	global.LOG.Info("服务退出")
-}
-
-func Close() {
-	internal.MysqlClose()
-	internal.RedisClose()
 }
