@@ -10,5 +10,5 @@ app:
     allowMethods: POST,GET,OPTIONS,DELETE,PUT
     allowHeaders: Content-Type,AccessToken,X-CSRF-Token,Authorization,Token,X-Token,X-User-Id
     exposeHeaders: Content-Length,Access-Control-Allow-Origin,Access-Control-Allow-Headers,Content-Type,New-Token,New-Expires-At
-    allowCredentials: true
+    allowCredentials: "true"
     maxAge: 43200
