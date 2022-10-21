@@ -14,10 +14,21 @@ type Config struct {
 type App struct {
 	Env      string
 	Mode     string
-	Debug    bool
 	Port     string
 	Limit    float64
 	Language string
+	Cors     Cors
+}
+
+// 跨域配置
+
+type Cors struct {
+	AllowOrigins     []string
+	AllowMethods     string
+	AllowHeaders     string
+	ExposeHeaders    string
+	AllowCredentials string
+	MaxAge           string
 }
 
 // 日志配置
