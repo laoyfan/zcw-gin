@@ -7,8 +7,6 @@ import (
 )
 
 func Cors(r *gin.Context) {
-	origin := r.GetHeader("origin")
-
 	// debug 模式 放行全部
 	if global.CONFIG.App.Mode == "debug" {
 		setHeader(r)
@@ -16,9 +14,11 @@ func Cors(r *gin.Context) {
 		return
 	}
 	// 开启校验
-	if checkCors(origin) {
+	if checkCors(r) {
+		// 设置请求头
 		setHeader(r)
 	} else {
+		// 拒绝请求
 		r.AbortWithStatus(http.StatusForbidden)
 	}
 	// 放行所有OPTIONS方法
@@ -40,9 +40,9 @@ func setHeader(r *gin.Context) {
 }
 
 // 校验跨域
-func checkCors(origin string) bool {
+func checkCors(r *gin.Context) bool {
 	for _, o := range global.CONFIG.App.Cors.AllowOrigins {
-		if origin == o {
+		if r.GetHeader("origin") == o {
 			return true
 		}
 	}
