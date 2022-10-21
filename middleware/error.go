@@ -32,7 +32,7 @@ func Error(r *gin.Context) {
 					zap.String("request", string(httpRequest)),
 				)
 				r.JSON(http.StatusOK, gin.H{
-					"code": -1,
+					"code": global.ERROR,
 					"msg":  "异常,请稍后重试",
 					"data": nil,
 				})

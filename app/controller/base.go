@@ -8,12 +8,6 @@ import (
 	"zcw-admin-server/global"
 )
 
-const (
-	SUCCESS int = 0
-	ERROR   int = -1
-	Valid   int = -2
-)
-
 // Response 响应体
 type Response struct {
 	Code int         `json:"code"`
@@ -34,21 +28,21 @@ func (c *Controller) Result(r *gin.Context, code int, msg string, data interface
 
 // Success 成功响应
 func (c *Controller) Success(r *gin.Context, data interface{}) {
-	c.Result(r, SUCCESS, "请求成功", data)
+	c.Result(r, global.SUCCESS, "请求成功", data)
 }
 
 // Error 失败响应
 func (c *Controller) Error(r *gin.Context, data interface{}) {
-	c.Result(r, ERROR, "请求失败", data)
+	c.Result(r, global.ERROR, "请求失败", data)
 }
 
 // Valid 参数校验
 func (c *Controller) Valid(r *gin.Context, valid interface{}) error {
 	if err := r.ShouldBind(valid); err != nil {
 		if errs, ok := err.(validator.ValidationErrors); ok {
-			c.Result(r, Valid, "请求参数校验失败", c.removeTopStruct(errs.Translate(global.Trans)))
+			c.Result(r, global.VALID, "请求参数校验失败", c.removeTopStruct(errs.Translate(global.Trans)))
 		} else {
-			c.Result(r, Valid, "请求参数校验失败", err.Error())
+			c.Result(r, global.VALID, "请求参数校验失败", err.Error())
 		}
 		return err
 	}

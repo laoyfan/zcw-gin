@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// 当前文件挂载全局
+// 全局变量
 
 var (
 	DB      = map[string]*gorm.DB{}

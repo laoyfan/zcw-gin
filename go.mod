@@ -11,6 +11,7 @@ require (
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/goccy/go-json v0.9.11 // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/jonboulle/clockwork v0.3.0 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.6 // indirect

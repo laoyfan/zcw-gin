@@ -32,16 +32,16 @@ func Cors(r *gin.Context) {
 // 允许跨域设置
 func setHeader(r *gin.Context) {
 	r.Header("Access-Control-Allow-Origin", r.GetHeader("origin"))
-	r.Header("Access-Control-Allow-Headers", global.CONFIG.App.Cors.AllowHeaders)
-	r.Header("Access-Control-Allow-Methods", global.CONFIG.App.Cors.AllowMethods)
-	r.Header("Access-Control-Expose-Headers", global.CONFIG.App.Cors.ExposeHeaders)
-	r.Header("Access-Control-Allow-Credentials", global.CONFIG.App.Cors.AllowCredentials)
-	r.Header("Access-Control-Max-Age", global.CONFIG.App.Cors.MaxAge)
+	r.Header("Access-Control-Allow-Headers", global.CONFIG.Cors.AllowHeaders)
+	r.Header("Access-Control-Allow-Methods", global.CONFIG.Cors.AllowMethods)
+	r.Header("Access-Control-Expose-Headers", global.CONFIG.Cors.ExposeHeaders)
+	r.Header("Access-Control-Allow-Credentials", global.CONFIG.Cors.AllowCredentials)
+	r.Header("Access-Control-Max-Age", global.CONFIG.Cors.MaxAge)
 }
 
 // 校验跨域
 func checkCors(r *gin.Context) bool {
-	for _, o := range global.CONFIG.App.Cors.AllowOrigins {
+	for _, o := range global.CONFIG.Cors.AllowOrigins {
 		if r.GetHeader("origin") == o {
 			return true
 		}
