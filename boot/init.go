@@ -15,7 +15,7 @@ import (
 	"zcw-admin-server/boot/internal"
 	"zcw-admin-server/global"
 	"zcw-admin-server/middleware"
-	"zcw-admin-server/utils"
+	"zcw-admin-server/util"
 )
 
 const ConfigDir = "config" //配置文件夹
@@ -24,7 +24,7 @@ const ConfigDir = "config" //配置文件夹
 
 func init() {
 	// 读取ConfigDir目录下所有配置
-	fileNames := utils.GetPathFileNames(ConfigDir) // 获取config文件夹下配置文件名称
+	fileNames := util.GetPathFileNames(ConfigDir) // 获取config文件夹下配置文件名称
 	if len(fileNames) > 0 {
 		for _, fileName := range fileNames {
 			v := viper.New()                            // 每个文件定义一个实例

@@ -9,11 +9,11 @@ import (
 	"path"
 	"time"
 	"zcw-admin-server/global"
-	"zcw-admin-server/utils"
+	"zcw-admin-server/util"
 )
 
 func Zap() {
-	if ok, _ := utils.PathExists(global.CONFIG.Zap.Director); !ok {
+	if ok, _ := util.PathExists(global.CONFIG.Zap.Director); !ok {
 		fmt.Println("创建日志文件夹", global.CONFIG.Zap.Director)
 		err := os.Mkdir(global.CONFIG.Zap.Director, os.ModePerm)
 		if err != nil {
