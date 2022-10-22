@@ -33,14 +33,14 @@ func ParseToken(tokenString string) (*global.UserInfo, error) {
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-				return nil, errors.New("That's not even a token")
+				return nil, errors.New("token错误")
 			} else if ve.Errors&jwt.ValidationErrorExpired != 0 {
 				// Token is expired
-				return nil, errors.New("Token is expired")
+				return nil, errors.New("token过期")
 			} else if ve.Errors&jwt.ValidationErrorNotValidYet != 0 {
-				return nil, errors.New("Token not active yet")
+				return nil, errors.New("token未激活")
 			} else {
-				return nil, errors.New("Couldn't handle this token:")
+				return nil, errors.New("token异常")
 			}
 		}
 	}
@@ -49,9 +49,9 @@ func ParseToken(tokenString string) (*global.UserInfo, error) {
 		if claims, ok := token.Claims.(*global.Claims); ok && token.Valid {
 			return &claims.UserInfo, nil
 		}
-		return nil, errors.New("invalid token")
+		return nil, errors.New("token无效")
 	} else {
-		return nil, errors.New("Couldn't handle this token:")
+		return nil, errors.New("token异常")
 	}
 }
 
