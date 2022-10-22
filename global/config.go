@@ -4,8 +4,6 @@ package global
 type Config struct {
 	App   App     `yaml:"app"`   // 系统
 	Zap   Zap     `yaml:"zap"`   // 日志
-	Jwt   Jwt     `yaml:"jwt"`   // Jwt
-	Cors  Cors    `yaml:"cors"`  // 跨域
 	Mysql []Mysql `yaml:"mysql"` // 数据库
 	Redis []Redis `yaml:"rides"` // Redis
 }
@@ -16,13 +14,15 @@ type App struct {
 	Port     string  `yaml:"port"`     // 端口
 	Limit    float64 `yaml:"limit"`    // 限流
 	Language string  `yaml:"language"` // 语言
+	Cors     Cors    `yaml:"cors"`     // 跨域
+	Jwt      Jwt     `yaml:"jwt"`      // Jwt
 }
 
 // Jwt token
 type Jwt struct {
 	SigningKey  string `yaml:"signingKey"`  // jwt签名
 	ExpiresTime int64  `yaml:"expiresTime"` // 过期时间
-	BufferTime  int64  `yaml:"bufferTime"`  // 缓冲时间
+	BufferTime  int    `yaml:"bufferTime"`  // 缓冲时间
 	Issuer      string `yaml:"issuer"`      // 签发者
 }
 

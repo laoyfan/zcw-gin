@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"zcw-admin-server/app/model/basic"
 	"zcw-admin-server/app/service"
 	"zcw-admin-server/global"
+	"zcw-admin-server/pkg/jwt"
 )
 
 var Index = new(IndexController)
@@ -34,5 +36,27 @@ func (c *IndexController) Test(r *gin.Context) {
 		"user": user,
 		"test": i,
 		"last": last.String(),
+	})
+}
+
+func (c *IndexController) Login(r *gin.Context) {
+	var loginReq entity.LoginReq
+	if err := c.Valid(r, &loginReq); err != nil {
+		return
+	}
+	access, refresh, err := jwt.CreateToken(global.UserInfo{
+		Username:    loginReq.Username,
+		UID:         1,
+		AuthorityId: 0,
+	})
+	if err != nil {
+		fmt.Println(err)
+		c.Error(r, "登录失败")
+		return
+	}
+	c.Success(r, entity.LoginResp{
+		Username: loginReq.Username,
+		Access:   access,
+		Refresh:  refresh,
 	})
 }

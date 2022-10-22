@@ -6,5 +6,5 @@ zap:
   stackTraceKey: console
   encodeLevel: LowercaseLevelEncoder
   prefix: zcw
-  logInConsole: false
-  showLine: false
+  logInConsole: true
+  showLine: true

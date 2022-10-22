@@ -2,40 +2,51 @@ package jwt
 
 import (
 	"errors"
+	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/golang/groupcache/singleflight"
 	"time"
 	"zcw-admin-server/global"
 )
 
-const TokenExpireDuration = time.Hour * 24
+// CreateToken 创建token 生成access_token 和 refresh_token
+func CreateToken(base global.UserInfo) (aToken, rToken string, err error) {
+	fmt.Println(global.CONFIG.App.Jwt.SigningKey)
 
-// CreateToken 创建token
-func CreateToken(base global.UserInfo) (string, error) {
+	TokenExpireDuration := time.Hour * time.Duration(global.CONFIG.App.Jwt.ExpiresTime) // 过期时长
+	SigningKey := []byte(global.CONFIG.App.Jwt.SigningKey)
 	claims := global.Claims{
-		UserInfo:   base,
-		BufferTime: global.CONFIG.Jwt.BufferTime,
+		UserInfo: base,
 		RegisteredClaims: jwt.RegisteredClaims{
-			NotBefore: jwt.NewNumericDate(time.Now().Add(TokenExpireDuration)),
+			NotBefore: jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TokenExpireDuration)),
-			Issuer:    global.CONFIG.Jwt.Issuer,
+			Issuer:    global.CONFIG.App.Jwt.Issuer,
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
-	return token.SignedString([]byte(global.CONFIG.Jwt.SigningKey))
+	fmt.Println(SigningKey, "33333333333333")
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	fmt.Println(token, "4444444444444")
+	// access_token
+	aToken, err = token.SignedString(SigningKey)
+	fmt.Println(err, "22222222222")
+	// refresh_token
+	rToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(TokenExpireDuration)),
+		Issuer:    global.CONFIG.App.Jwt.Issuer,
+	}).SignedString(SigningKey)
+	fmt.Println(err, "1111111111111")
+	return
 }
 
-// ParseToken 解析token
+// ParseToken 解析access_token
 func ParseToken(tokenString string) (*global.UserInfo, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &global.Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return global.CONFIG.Jwt.SigningKey, nil
-	})
+	token, err := jwt.ParseWithClaims(tokenString, &global.Claims{}, checkToken)
+	fmt.Println(err, "66666666666666666")
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
 				return nil, errors.New("token错误")
 			} else if ve.Errors&jwt.ValidationErrorExpired != 0 {
-				// Token is expired
 				return nil, errors.New("token过期")
 			} else if ve.Errors&jwt.ValidationErrorNotValidYet != 0 {
 				return nil, errors.New("token未激活")
@@ -55,11 +66,34 @@ func ParseToken(tokenString string) (*global.UserInfo, error) {
 	}
 }
 
-// CreateTokenByOldToken 以旧换新
-func CreateTokenByOldToken(oldToken string, base global.UserInfo) (string, error) {
+func checkToken(*jwt.Token) (interface{}, error) {
+	return []byte(global.CONFIG.App.Jwt.SigningKey), nil
+}
+
+// RefreshToken 刷新access_token和refresh_token
+func RefreshToken(aToken, rToken string) (string, string, error) {
+	// 检测refresh_token 时间 格式
+	if _, err := jwt.Parse(rToken, checkToken); err != nil {
+		return "", "", err
+	}
+
 	s := &singleflight.Group{}
-	token, err := s.Do("JWT:"+oldToken, func() (interface{}, error) {
-		return CreateToken(base)
+	token, err := s.Do("JWT:"+aToken, func() (interface{}, error) {
+		oToken, err := jwt.ParseWithClaims(aToken, &global.Claims{}, checkToken)
+		v, _ := err.(*jwt.ValidationError)
+		if v.Errors == jwt.ValidationErrorExpired {
+			if claims, ok := oToken.Claims.(*global.Claims); ok && oToken.Valid {
+				t1, t2, err := CreateToken(claims.UserInfo)
+				if err == nil {
+					return []string{t1, t2}, nil
+				}
+			}
+		}
+		return nil, err
 	})
-	return token.(string), err
+	tokens := token.([]string)
+	if err != nil {
+		return "", "", err
+	}
+	return tokens[0], tokens[1], nil
 }

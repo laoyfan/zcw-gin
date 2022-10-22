@@ -1,6 +1,6 @@
 app:
   # gin release模式与debug模式切换
-  mode: release
+  mode: debug
   port: :8880
   limit: 10
   language: zh
@@ -12,3 +12,10 @@ app:
     exposeHeaders: Content-Length,Access-Control-Allow-Origin,Access-Control-Allow-Headers,Content-Type,New-Token,New-Expires-At
     allowCredentials: "true"
     maxAge: 43200
+  jwt:
+    signingKey: qmPlus
+    expiresTime: 1
+    bufferTime: 1
+    issuer: zhuchangwen
+
+
