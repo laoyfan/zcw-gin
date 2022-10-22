@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 	"zcw-admin-server/global"
-	"zcw-admin-server/util"
 )
 
 // Response 响应体
@@ -41,7 +40,7 @@ func (c *Controller) Error(r *gin.Context, data interface{}) {
 func (c *Controller) Valid(r *gin.Context, valid interface{}) error {
 	if err := r.ShouldBind(valid); err != nil {
 		if errs, ok := err.(validator.ValidationErrors); ok {
-			c.Result(r, global.VALID, "请求参数校验失败", util.RemoveTopStruct(errs.Translate(global.Trans)))
+			c.Result(r, global.VALID, "请求参数校验失败", c.removeTopStruct(errs.Translate(global.Trans)))
 		} else {
 			c.Result(r, global.VALID, "请求参数校验失败", err.Error())
 		}

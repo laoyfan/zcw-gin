@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
-	"strings"
 )
 
 // PathExists 判断路径存在
@@ -29,13 +28,6 @@ func GetPathFileNames(path string) (names []string) {
 		if !file.IsDir() {
 			names = append(names, file.Name())
 		}
-	}
-	return
-}
-
-func RemoveTopStruct(fields map[string]string) (res map[string]string) {
-	for field, err := range fields {
-		res[field[strings.Index(field, ".")+1:]] = err
 	}
 	return
 }
