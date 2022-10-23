@@ -6,7 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/golang/groupcache/singleflight"
 	"time"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 // CreateToken 创建token 生成access_token 和 refresh_token

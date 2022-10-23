@@ -1,8 +1,8 @@
 package internal
 
 import (
-	"zcw-admin-server/global"
-	"zcw-admin-server/pkg/redis"
+	"zcw-gin/global"
+	"zcw-gin/pkg/redis"
 )
 
 // 初始化redis

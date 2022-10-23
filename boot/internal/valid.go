@@ -10,7 +10,7 @@ import (
 	znTranslations "github.com/go-playground/validator/v10/translations/zh"
 	"reflect"
 	"strings"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 func Valid() {

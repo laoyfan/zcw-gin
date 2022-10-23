@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"zcw-admin-server/app/controller"
-	"zcw-admin-server/middleware"
+	"zcw-gin/app/controller"
+	"zcw-gin/middleware"
 )
 
 // Api api

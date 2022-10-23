@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"time"
-	"zcw-admin-server/app/entity"
-	"zcw-admin-server/app/model/basic"
-	"zcw-admin-server/app/service"
-	"zcw-admin-server/global"
-	"zcw-admin-server/pkg/jwt"
+	"zcw-gin/app/entity"
+	"zcw-gin/app/model/basic"
+	"zcw-gin/app/service"
+	"zcw-gin/global"
+	"zcw-gin/pkg/jwt"
 )
 
 var Index = new(IndexController)

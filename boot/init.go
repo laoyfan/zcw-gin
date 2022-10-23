@@ -12,10 +12,10 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"zcw-admin-server/boot/internal"
-	"zcw-admin-server/global"
-	"zcw-admin-server/middleware"
-	"zcw-admin-server/util"
+	"zcw-gin/boot/internal"
+	"zcw-gin/global"
+	"zcw-gin/middleware"
+	"zcw-gin/util"
 )
 
 const ConfigDir = "config" //配置文件夹

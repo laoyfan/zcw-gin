@@ -1,8 +1,8 @@
 package internal
 
 import (
-	"zcw-admin-server/global"
-	"zcw-admin-server/pkg/mysql"
+	"zcw-gin/global"
+	"zcw-gin/pkg/mysql"
 )
 
 // 初始化mysql

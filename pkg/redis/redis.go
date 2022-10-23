@@ -6,7 +6,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"net"
 	"time"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 func NewRedisClient(r global.Redis) *redis.Client {

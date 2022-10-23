@@ -5,7 +5,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"net/http"
 	"strings"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 // Response 响应体

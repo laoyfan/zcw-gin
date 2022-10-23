@@ -9,7 +9,7 @@ import (
 	"os"
 	"runtime/debug"
 	"strings"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 // Error 处理异常捕获

@@ -3,7 +3,7 @@ package mysql
 import (
 	"fmt"
 	"gorm.io/gorm/logger"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 type Writer struct {

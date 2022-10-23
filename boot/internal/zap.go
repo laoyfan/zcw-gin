@@ -8,8 +8,8 @@ import (
 	"os"
 	"path"
 	"time"
-	"zcw-admin-server/global"
-	"zcw-admin-server/util"
+	"zcw-gin/global"
+	"zcw-gin/util"
 )
 
 func Zap() {

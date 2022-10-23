@@ -4,7 +4,7 @@ import (
 	"github.com/didip/tollbooth"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 func Limiter(r *gin.Context) {

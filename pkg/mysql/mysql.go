@@ -9,7 +9,7 @@ import (
 	"log"
 	"os"
 	"time"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 func NewMysql(m global.Mysql) *gorm.DB {

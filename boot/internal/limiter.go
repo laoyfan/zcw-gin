@@ -2,7 +2,7 @@ package internal
 
 import (
 	"github.com/didip/tollbooth"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 // 创建限流器实例

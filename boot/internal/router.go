@@ -2,7 +2,7 @@ package internal
 
 import (
 	"github.com/gin-gonic/gin"
-	"zcw-admin-server/router"
+	"zcw-gin/router"
 )
 
 func Route(r *gin.Engine) *gin.Engine {

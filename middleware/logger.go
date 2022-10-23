@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"time"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 // LogLayout 日志layout

@@ -2,7 +2,7 @@ package basic
 
 import (
 	"gorm.io/gorm"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 type BaseModel struct{}

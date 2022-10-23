@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"zcw-admin-server/global"
+	"zcw-gin/global"
 )
 
 func Cors(r *gin.Context) {

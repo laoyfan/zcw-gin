@@ -1,7 +1,7 @@
 package main
 
 import (
-	"zcw-admin-server/boot"
+	"zcw-gin/boot"
 )
 
 func main() {

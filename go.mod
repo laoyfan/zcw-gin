@@ -1,4 +1,4 @@
-module zcw-admin-server
+module zcw-gin
 
 go 1.16
 

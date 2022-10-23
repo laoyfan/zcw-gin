@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"zcw-admin-server/global"
-	"zcw-admin-server/pkg/jwt"
+	"zcw-gin/global"
+	"zcw-gin/pkg/jwt"
 )
 
 func JWT(r *gin.Context) {
