@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"errors"
-	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/golang/groupcache/singleflight"
 	"time"
@@ -11,8 +10,6 @@ import (
 
 // CreateToken 创建token 生成access_token 和 refresh_token
 func CreateToken(base global.UserInfo) (aToken, rToken string, err error) {
-	fmt.Println(global.CONFIG.App.Jwt.SigningKey)
-
 	TokenExpireDuration := time.Hour * time.Duration(global.CONFIG.App.Jwt.ExpiresTime) // 过期时长
 	SigningKey := []byte(global.CONFIG.App.Jwt.SigningKey)
 	claims := global.Claims{
@@ -23,25 +20,20 @@ func CreateToken(base global.UserInfo) (aToken, rToken string, err error) {
 			Issuer:    global.CONFIG.App.Jwt.Issuer,
 		},
 	}
-	fmt.Println(SigningKey, "33333333333333")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	fmt.Println(token, "4444444444444")
 	// access_token
 	aToken, err = token.SignedString(SigningKey)
-	fmt.Println(err, "22222222222")
 	// refresh_token
 	rToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(TokenExpireDuration)),
 		Issuer:    global.CONFIG.App.Jwt.Issuer,
 	}).SignedString(SigningKey)
-	fmt.Println(err, "1111111111111")
 	return
 }
 
 // ParseToken 解析access_token
 func ParseToken(tokenString string) (*global.UserInfo, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &global.Claims{}, checkToken)
-	fmt.Println(err, "66666666666666666")
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
