@@ -1,17 +1,16 @@
 package middleware
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 	"zcw-gin/global"
 	"zcw-gin/pkg/jwt"
 )
 
 func JWT(r *gin.Context) {
-	aToken := r.Request.Header.Get("access_token")
-	rToken := r.Request.Header.Get("refresh_token")
-	if aToken == "" || rToken == "" {
+	Authorization := r.Request.Header.Get("Authorization")
+	if Authorization == "" {
 		r.JSON(http.StatusOK, gin.H{
 			"code": global.FORBIDDEN,
 			"msg":  "未登陆或非法访问",
@@ -20,21 +19,23 @@ func JWT(r *gin.Context) {
 		r.Abort()
 		return
 	}
-	userInfo, err := jwt.ParseToken(aToken)
-	fmt.Println(userInfo, "5555555555555")
+
+	tokens := strings.SplitN(Authorization, " ", 2)
+
+	token := tokens[1]
+
+	userInfo, err := jwt.ParseToken(token)
 	if err != nil {
-		aToken, rToken, err = jwt.RefreshToken(aToken, rToken)
-		if err != nil {
-			r.JSON(http.StatusOK, gin.H{
-				"code": global.FORBIDDEN,
-				"msg":  err.Error(),
-				"data": nil,
-			})
-			r.Abort()
-			return
-		}
-		r.Header("access_token", aToken)
-		r.Header("refresh_token", rToken)
+		return
+	}
+	if err != nil {
+		r.JSON(http.StatusOK, gin.H{
+			"code": global.FORBIDDEN,
+			"msg":  err.Error(),
+			"data": nil,
+		})
+		r.Abort()
+		return
 	}
 	r.Set("userInfo", userInfo)
 	r.Next()
