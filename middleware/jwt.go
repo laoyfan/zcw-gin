@@ -22,6 +22,16 @@ func JWT(r *gin.Context) {
 
 	tokens := strings.SplitN(Authorization, " ", 2)
 
+	if len(tokens) != 2 || tokens[0] != "Bearer" {
+		r.JSON(http.StatusOK, gin.H{
+			"code": global.FORBIDDEN,
+			"msg":  "未登陆或非法访问",
+			"data": nil,
+		})
+		r.Abort()
+		return
+	}
+
 	token := tokens[1]
 
 	userInfo, err := jwt.ParseToken(token)
