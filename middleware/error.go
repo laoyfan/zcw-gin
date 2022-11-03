@@ -45,7 +45,11 @@ func Error(r *gin.Context) {
 				zap.String("request", string(httpRequest)),
 				zap.String("stack", string(debug.Stack())),
 			)
-			r.AbortWithStatus(http.StatusInternalServerError)
+			r.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"code": global.ERROR,
+				"msg":  "服务器开小差,请稍后重试",
+				"data": nil,
+			})
 		}
 	}()
 	r.Next()
