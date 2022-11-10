@@ -17,4 +17,5 @@ var (
 	CONFIG  Config
 	LIMITER *limiter.Limiter
 	Trans   ut.Translator
+	Golbal  = NewContainer()
 )

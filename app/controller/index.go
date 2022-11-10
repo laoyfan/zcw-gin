@@ -3,9 +3,11 @@ package controller
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
-	"time"
+
 	"zcw-gin/app/entity"
 	"zcw-gin/app/model/basic"
 	"zcw-gin/app/service"
@@ -13,14 +15,18 @@ import (
 	"zcw-gin/pkg/jwt"
 )
 
-var Index = new(IndexController)
-
 type IndexController struct {
 	Controller
-	indexService service.IndexService
+}
+
+func Index() *IndexController {
+	return global.Golbal.GetOrSetController("index", func() interface{} {
+		return new(IndexController)
+	}).(*IndexController)
 }
 
 func (c *IndexController) Test(r *gin.Context) {
+	service.Index()
 	var params entity.Index
 	if err := c.Valid(r, &params); err != nil {
 		return

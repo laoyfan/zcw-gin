@@ -73,3 +73,13 @@ func (c *Container) doSet(key string, value interface{}) interface{} {
 	}
 	return value
 }
+
+// GetOrSetController 控制器对象
+func (c *Container) GetOrSetController(key string, f func() interface{}) interface{} {
+	return c.GetOrSetFunc("controller."+key, f)
+}
+
+// GetOrSetService 服务对象
+func (c *Container) GetOrSetService(key string, f func() interface{}) interface{} {
+	return c.GetOrSetFunc("service."+key, f)
+}
