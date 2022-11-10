@@ -7,6 +7,7 @@ type Container struct {
 	data map[string]interface{}
 }
 
+// NewContainer 初始化容器
 func NewContainer() *Container {
 	return &Container{
 		mu:   new(sync.RWMutex),
@@ -14,32 +15,61 @@ func NewContainer() *Container {
 	}
 }
 
-func (c *Container) Search(key string) (val interface{}, found bool) {
+// Search 查询容器对象
+func (c *Container) Search(key string) (value interface{}, found bool) {
 	c.mu.RLock()
-	val, found = c.data[key]
+	value, found = c.data[key]
 	c.mu.RUnlock()
 	return
 }
 
-func (c *Container) Set(key string, val interface{}) {
+// Set 向写入对象
+func (c *Container) Set(key string, value interface{}) {
 	c.mu.Lock()
-	c.data[key] = val
+	c.data[key] = value
 	c.mu.Unlock()
 }
 
-func (c *Container) Get(key string) (val interface{}) {
+// Get 获取容器对象
+func (c *Container) Get(key string) (value interface{}) {
 	c.mu.RLock()
-	val, _ = c.data[key]
+	value, _ = c.data[key]
 	c.mu.RUnlock()
 	return
 }
 
-func (c *Container) Delete(key string) (val interface{}) {
+// Delete 从容器删除对象
+func (c *Container) Delete(key string) (value interface{}) {
 	c.mu.Lock()
 	var ok bool
-	if val, ok = c.data[key]; ok {
+	if value, ok = c.data[key]; ok {
 		delete(c.data, key)
 	}
 	c.mu.Unlock()
 	return
+}
+
+// GetOrSetFunc 获取对象
+func (c *Container) GetOrSetFunc(key string, f func() interface{}) interface{} {
+	if v, ok := c.Search(key); !ok {
+		return c.doSet(key, f)
+	} else {
+		return v
+	}
+}
+
+// doSet 写入对象
+func (c *Container) doSet(key string, value interface{}) interface{} {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if v, ok := c.data[key]; ok {
+		return v
+	}
+	if f, ok := value.(func() interface{}); ok {
+		value = f()
+	}
+	if value != nil {
+		c.data[key] = value
+	}
+	return value
 }
