@@ -1,18 +1,20 @@
-package boot
+package core
 
 import (
 	"context"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
-	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-	"zcw-gin/boot/internal"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+	"go.uber.org/zap"
+
+	"zcw-gin/core/internal"
 	"zcw-gin/global"
 	"zcw-gin/middleware"
 	"zcw-gin/util"

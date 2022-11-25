@@ -1,6 +1,9 @@
 package internal
 
 import (
+	"reflect"
+	"strings"
+
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
@@ -8,8 +11,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	znTranslations "github.com/go-playground/validator/v10/translations/zh"
-	"reflect"
-	"strings"
+
 	"zcw-gin/global"
 )
 
