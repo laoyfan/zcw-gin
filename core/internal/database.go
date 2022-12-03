@@ -7,14 +7,13 @@ import (
 	"gorm.io/gorm"
 
 	"zcw-gin/core"
-	"zcw-gin/pkg/mysql"
 )
 
 func Database(name ...string) *gorm.DB {
 	var (
 		ctx    = context.Background()
-		dbname = "default"
 		prefix = "database"
+		dbname = "default"
 	)
 
 	if len(name) > 0 && name[0] != "" {
@@ -23,12 +22,15 @@ func Database(name ...string) *gorm.DB {
 
 	dbKey := fmt.Sprintf("%s.%s", prefix, dbname)
 
-	db := core.Container.GetOrSetFunc(dbKey, func() interface{} {
-		return mysql.NewMysql()
-	})
+	return core.Container.GetOrSetFunc(dbKey, func() interface{} {
+		config := Config("config")
+		disable := config.GetBool(dbname + ".disable")
+		if disable {
+			return nil
+		}
 
-	if db != nil {
-		return db.(*gorm.DB)
-	}
-	return nil
+		ctx.Err()
+		return nil
+		//return mysql.NewMysql()
+	}).(*gorm.DB)
 }

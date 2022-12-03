@@ -53,7 +53,7 @@ func init() {
 // 初始化连接
 
 func created() {
-	internal.Zap()
+	//internal.Zap()
 	internal.Mysql()
 	internal.Redis()
 	internal.Limiter()
