@@ -1,10 +1,9 @@
-zap:
-  director: log
-  level: info
-  maxAge: 1
-  format: console
-  stackTraceKey: console
-  encodeLevel: LowercaseLevelEncoder
-  prefix: zcw
-  logInConsole: true
-  showLine: true
+director: log
+level: info
+maxAge: 1
+format: console
+stackTraceKey: console
+encodeLevel: LowercaseLevelEncoder
+prefix: zcw
+logInConsole: true
+showLine: true
