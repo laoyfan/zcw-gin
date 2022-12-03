@@ -1,21 +1,19 @@
-app:
-  # gin release模式与debug模式切换
-  mode: debug
-  port: :8880
-  limit: 10
-  language: zh
-  cors:
-    allowOrigins:
-      - http://127.0.0.1:8880
-    allowMethods: POST,GET,OPTIONS,DELETE,PUT
-    allowHeaders: Content-Type,AccessToken,X-CSRF-Token,Authorization,Token,X-Token,X-User-Id
-    exposeHeaders: Content-Length,Access-Control-Allow-Origin,Access-Control-Allow-Headers,Content-Type,New-Token,New-Expires-At
-    allowCredentials: "true"
-    maxAge: 43200
-  jwt:
-    signingKey: qmPlus
-    expiresTime: 1
-    bufferTime: 1
-    issuer: zhuchangwen
+mode: debug # gin release模式与debug模式切换
+port: :8880
+limit: 10
+language: zh
+cors:
+  allowOrigins:
+    - http://127.0.0.1:8880
+  allowMethods: POST,GET,OPTIONS,DELETE,PUT
+  allowHeaders: Content-Type,AccessToken,X-CSRF-Token,Authorization,Token,X-Token,X-User-Id
+  exposeHeaders: Content-Length,Access-Control-Allow-Origin,Access-Control-Allow-Headers,Content-Type,New-Token,New-Expires-At
+  allowCredentials: "true"
+  maxAge: 43200
+jwt:
+  signingKey: qmPlus
+  expiresTime: 1
+  bufferTime: 1
+  issuer: zhuchangwen
 
 
