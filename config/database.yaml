@@ -1,19 +1,25 @@
 default:
   disable: false
-  type: mysql
-  node:
-    - path: 127.0.0.1
-      port: "3306"
+  driver: mysql
+  host: 127.0.0.1
+  port: 3306
+  database: user-center
+  username: root
+  password: 123456
+  write:
+    - host: 127.0.0.1
+      port: 3306
       database: user-center
       username: root
-      password: "123456"
-      role: true
-    - path: 127.0.0.1
-      port: "3306"
+      password: 123456
+  read:
+    - host: 127.0.0.1
+      port: 3306
       database: user-center
       username: root
-      password: "123456"
-      role: false
+      password: 123456
+  charset: utf8mb4
+  collation: utf8mb4_unicode_ci
   maxIdleConns: 10
   maxOpenConns: 100
   logLevel: info

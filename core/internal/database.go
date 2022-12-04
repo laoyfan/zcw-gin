@@ -1,8 +1,8 @@
 package internal
 
 import (
-	"context"
 	"fmt"
+	"zcw-gin/pkg/database"
 
 	"gorm.io/gorm"
 
@@ -11,7 +11,6 @@ import (
 
 func Database(name ...string) *gorm.DB {
 	var (
-		ctx    = context.Background()
 		prefix = "database"
 		dbname = "default"
 	)
@@ -29,8 +28,36 @@ func Database(name ...string) *gorm.DB {
 			return nil
 		}
 
-		ctx.Err()
-		return nil
-		//return mysql.NewMysql()
+		var (
+			write []database.Node
+			read  []database.Node
+		)
+
+		err := config.UnmarshalKey(dbname+".write", write)
+		if err != nil {
+			write = []database.Node{}
+		}
+		err = config.UnmarshalKey(dbname+".read", read)
+		if err != nil {
+			read = []database.Node{}
+		}
+
+		return database.Mysql(database.Config{
+			Disable:      config.GetBool(dbname + ".disable"),
+			Driver:       config.GetString(dbname + ".driver"),
+			Host:         config.GetString(dbname + ".host"),
+			Port:         config.GetString(dbname + ".port"),
+			Database:     config.GetString(dbname + ".database"),
+			Username:     config.GetString(dbname + ".username"),
+			Password:     config.GetString(dbname + ".password"),
+			Write:        write,
+			Read:         read,
+			Charset:      config.GetString(dbname + ".charset"),
+			Collation:    config.GetString(dbname + ".collation"),
+			MaxIdLeConns: config.GetInt(dbname + ".maxIdleConns"),
+			MaxOpenConns: config.GetInt(dbname + ".maxOpenConns"),
+			LogLevel:     config.GetString(dbname + ".logLevel"),
+			Log:          config.GetBool(dbname + ".log"),
+		})
 	}).(*gorm.DB)
 }
