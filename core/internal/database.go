@@ -33,11 +33,11 @@ func Database(name ...string) *gorm.DB {
 			read  []database.Node
 		)
 
-		err := config.UnmarshalKey(dbname+".write", write)
+		err := config.UnmarshalKey(dbname+".write", &write)
 		if err != nil {
 			write = []database.Node{}
 		}
-		err = config.UnmarshalKey(dbname+".read", read)
+		err = config.UnmarshalKey(dbname+".read", &read)
 		if err != nil {
 			read = []database.Node{}
 		}
